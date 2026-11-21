@@ -176,13 +176,13 @@
       if (!en.isIntersecting) return;
       io.unobserve(en.target);
       var el = en.target, to = parseInt(el.getAttribute('data-count'), 10);
-      var from = to >= 1000 && to < 2100 ? to - 4 : 0; // 연도는 살짝만
+      var from = parseInt(el.getAttribute('data-from') || '0', 10), fmt = el.hasAttribute('data-fmt');
       var t0 = null, dur = 1400;
       function step(ts) {
         if (!t0) t0 = ts;
         var p = Math.min((ts - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
         var v = Math.round(from + (to - from) * e);
-        el.textContent = to >= 2100 ? v.toLocaleString('ko-KR') : String(v);
+        el.textContent = fmt ? v.toLocaleString('ko-KR') : String(v);
         if (p < 1) requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
