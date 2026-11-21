@@ -165,3 +165,28 @@
     });
   }
 })();
+
+/* 메인 실적 숫자 카운트업 */
+(function () {
+  var els = document.querySelectorAll('[data-count]');
+  if (!els.length || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      io.unobserve(en.target);
+      var el = en.target, to = parseInt(el.getAttribute('data-count'), 10);
+      var from = to >= 1000 && to < 2100 ? to - 4 : 0; // 연도는 살짝만
+      var t0 = null, dur = 1400;
+      function step(ts) {
+        if (!t0) t0 = ts;
+        var p = Math.min((ts - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+        var v = Math.round(from + (to - from) * e);
+        el.textContent = to >= 2100 ? v.toLocaleString('ko-KR') : String(v);
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }, { threshold: 0.4 });
+  els.forEach(function (el) { io.observe(el); });
+})();
