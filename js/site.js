@@ -190,3 +190,49 @@
   }, { threshold: 0.4 });
   els.forEach(function (el) { io.observe(el); });
 })();
+
+/* 마우스 호버 모션 (PC 전용) */
+(function () {
+  if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 1. 서비스 카드 조명 위치
+  document.querySelectorAll('.h-svc').forEach(function (el) {
+    el.addEventListener('mousemove', function (e) {
+      var r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+  if (reduce) return;
+
+  // 3. 버튼이 커서 쪽으로 살짝 끌려옴
+  document.querySelectorAll('.ctaBtn, .ref-download-btn, .cform .submit-btn').forEach(function (el) {
+    var k = el.classList.contains('submit-btn') ? 0.08 : 0.25;
+    el.addEventListener('mousemove', function (e) {
+      var r = el.getBoundingClientRect();
+      var dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+      el.style.transform = 'translate(' + (dx * k).toFixed(1) + 'px,' + (dy * k * 1.3).toFixed(1) + 'px)';
+    });
+    el.addEventListener('mouseleave', function () { el.style.transform = ''; });
+  });
+
+  // 5. 첫 화면 기울기
+  var hero = document.querySelector('.promotion');
+  if (hero) {
+    var root = document.documentElement, raf = 0, nx = 0, ny = 0;
+    hero.addEventListener('mousemove', function (e) {
+      var r = hero.getBoundingClientRect();
+      nx = (e.clientX - r.left) / r.width - 0.5;
+      ny = (e.clientY - r.top) / r.height - 0.5;
+      if (!raf) raf = requestAnimationFrame(function () {
+        root.style.setProperty('--px', nx.toFixed(3));
+        root.style.setProperty('--py', ny.toFixed(3));
+        raf = 0;
+      });
+    });
+    hero.addEventListener('mouseleave', function () {
+      root.style.setProperty('--px', 0); root.style.setProperty('--py', 0);
+    });
+  }
+})();

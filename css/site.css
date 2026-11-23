@@ -815,6 +815,90 @@ body.menu-open .m-menu { transform: none; }
   .h-svc-no, .h-step span, .h-svc-more { font-size: 20rem; }
 }
 
+/* ---------- 마우스 호버 모션 (PC 전용) ---------- */
+.h-svc, .ab2-box { position: relative; overflow: hidden; }
+.h-svc > *, .ab2-box > * { position: relative; z-index: 1; }
+.ctaBtn, .ref-download-btn, .cform .submit-btn { position: relative; overflow: hidden; isolation: isolate; }
+.ctaBtn::before, .ref-download-btn::before, .cform .submit-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .45s cubic-bezier(.2, .8, .2, 1);
+}
+.ctaBtn::before { background: #fff; }
+.ref-download-btn::before { background: rgba(255, 255, 255, .35); }
+.cform .submit-btn::before { background: var(--main-color); }
+
+@media (hover: hover) and (pointer: fine) {
+  /* 1. 서비스 카드: 떠오름 + 마우스 따라 민트 조명 + 화살표 이동 */
+  .h-svc { transition: background-color .3s, border-color .3s, box-shadow .35s, translate .35s cubic-bezier(.2, .8, .2, 1), opacity 1.2s ease, transform 1.2s ease; }
+  .h-svc::before {
+    content: '';
+    position: absolute; inset: 0;
+    z-index: 0;
+    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgba(29, 233, 182, .16), transparent 60%);
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+  }
+  .h-svc:hover { translate: 0 -6px; box-shadow: 0 18px 40px rgba(0, 0, 0, .35); }
+  .h-svc:hover::before { opacity: 1; }
+  .h-svc-more { display: inline-block; transition: color .25s, transform .3s; }
+  .h-svc:hover .h-svc-more { transform: translateX(6px); }
+
+  /* 2. 상단 메뉴: 민트 밑줄 */
+  .site-header .gnb a { position: relative; padding: 6px 0; }
+  .site-header .gnb a::after {
+    content: '';
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: var(--main-color);
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform .35s cubic-bezier(.2, .8, .2, 1);
+  }
+  .site-header .gnb a:hover::after { transform: scaleX(1); transform-origin: left center; }
+  .site-header .gnb a.active::after { transform: scaleX(1); }
+
+  /* 3. 버튼: 채워지는 효과 (끌려오는 효과는 JS) */
+  .ctaBtn, .ref-download-btn, .cform .submit-btn { transition: color .3s, box-shadow .3s, transform .25s ease-out; }
+  .ctaBtn:hover::before, .ref-download-btn:hover::before, .cform .submit-btn:hover::before { transform: scaleX(1); }
+  .ctaBtn:hover { color: #000 !important; }
+  .cform .submit-btn:hover { filter: none; }
+  .ref-download-btn:hover { transform: none; }
+
+  /* 4. 진행 단계: 민트 선이 끝까지 */
+  .h-step::before { transition: width .5s cubic-bezier(.2, .8, .2, 1); }
+  .h-step:hover::before { width: 100%; }
+  .h-step h3 { transition: color .3s; }
+  .h-step:hover h3 { color: var(--main-color); }
+
+  /* 5. 첫 화면: 마우스 방향으로 살짝 기울기 */
+  .promotion .p-text { transition: transform .6s cubic-bezier(.2, .8, .2, 1); transform: perspective(900px) rotateX(calc(var(--py, 0) * -3deg)) rotateY(calc(var(--px, 0) * 4deg)) translate3d(calc(var(--px, 0) * 10px), calc(var(--py, 0) * 8px), 0); }
+  .p-sb { transition: transform .8s cubic-bezier(.2, .8, .2, 1); transform: translate3d(calc(var(--px, 0) * -18px), calc(var(--py, 0) * -14px), 0); }
+
+  /* 6. About 서비스 박스: 아이콘 튀어오름 */
+  .ab2-box { transition: background-color .3s, translate .35s cubic-bezier(.2, .8, .2, 1), opacity 1.2s ease, transform 1.2s ease; }
+  .ab2-box:hover { translate: 0 -4px; }
+  .ab2-box:hover .ab2-box-image { animation: iconHop .6s cubic-bezier(.3, 1.6, .5, 1); }
+
+  /* 7. FAQ: 줄 밝아짐 + 기호 회전 */
+  .faq-question { transition: background-color .25s, color .25s; }
+  .faq-question:hover { background-color: rgba(255, 255, 255, .05); }
+  .faq-item:not(.active) .faq-question:hover span { transform: rotate(90deg); }
+}
+@keyframes iconHop {
+  0% { transform: translateY(0); }
+  40% { transform: translateY(-10px) rotate(-6deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .promotion .p-text, .p-sb { transform: none !important; }
+  .h-svc:hover, .ab2-box:hover { translate: none; }
+}
+
 /*==================================================*/
 @media (max-width: 1650px) {
   html { font-size: 0.06756756756756757vw; }
