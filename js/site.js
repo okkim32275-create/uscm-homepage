@@ -138,6 +138,7 @@
         _subject: '[USCM 홈페이지 문의] ' + fd.get('문의구분') + ' / ' + fd.get('이름'),
         _template: 'table',
         _replyto: email,
+        _cc: 'okkim322@naver.com', // 대표 네이버 메일로도 사본 발송(앱 알림용)
         '문의구분': fd.get('문의구분'),
         '이름': fd.get('이름'),
         '연락처': fd.get('연락처'),
